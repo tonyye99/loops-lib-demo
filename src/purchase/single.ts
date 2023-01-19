@@ -1,3 +1,5 @@
-export function singlePurchase() {
-  console.log("singlePurchase");
-}
+const singlePurchase = () => {
+  console.log("hello from singlePurchase");
+};
+
+export { singlePurchase };

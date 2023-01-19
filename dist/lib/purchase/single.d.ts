@@ -1,1 +1,2 @@
-export declare function singlePurchase(): void;
+declare const singlePurchase: () => void;
+export { singlePurchase };
