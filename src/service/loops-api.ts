@@ -1,6 +1,6 @@
-// const apiUrl =
-//   "http://loops-server-alb-1090889888.ap-northeast-2.elb.amazonaws.com";
-const apiUrl = "http://localhost:8080";
+const apiUrl =
+  "http://loops-server-alb-1090889888.ap-northeast-2.elb.amazonaws.com";
+// const apiUrl = "http://localhost:8080";
 
 export async function getCredentials(clientId: string, clientSecret: string) {
   if (!clientId || !clientSecret) {
