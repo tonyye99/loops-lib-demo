@@ -1,3 +1,4 @@
-export { singlePurchase } from "./purchase/single";
+import initialize from "./loops";
 
-console.log("hello from loops-sdk");
+export { singlePurchase } from "./purchase/single";
+export { initialize };

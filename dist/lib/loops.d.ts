@@ -1,1 +1,1 @@
-export default function Loops(clientId: string, clientSecret: string): Promise<void>;
+export default function initialize(clientId: string, clientSecret: string): Promise<void>;

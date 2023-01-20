@@ -1,2 +1,2 @@
-declare const singlePurchase: () => void;
+declare const singlePurchase: (plan: any) => Promise<void>;
 export { singlePurchase };
