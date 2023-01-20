@@ -1,2 +1,1 @@
-import { singlePurchase } from "./purchase/single";
-export { singlePurchase };
+export { singlePurchase } from "./purchase/single";

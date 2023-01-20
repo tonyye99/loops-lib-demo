@@ -10,6 +10,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "./dist"),
     filename: "loops-bundle.js", // <--- Will be compiled to this single file
+    library: "loops", // <--- Name of the global variable
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],

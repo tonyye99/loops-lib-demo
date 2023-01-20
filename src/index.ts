@@ -1,4 +1,3 @@
-import { singlePurchase } from "./purchase/single";
+export { singlePurchase } from "./purchase/single";
 
 console.log("hello from loops-sdk");
-export { singlePurchase };
