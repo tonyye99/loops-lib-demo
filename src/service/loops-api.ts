@@ -1,5 +1,12 @@
 const apiUrl =
   'http://loops-server-alb-1090889888.ap-northeast-2.elb.amazonaws.com'
+
+// shipping: '0(通常配送) / 1(無料配送)',
+
+// 0: plan
+// 1: product
+// 2: group
+
 // const apiUrl = 'http://localhost:8080'
 import { addDays, addMonths, setDate, endOfMonth } from 'date-fns'
 
@@ -54,7 +61,8 @@ export async function createStripePaymentIntent(amount: number) {
 export async function createLoopsSubscription(
   address: any,
   plan: any,
-  email: string
+  email: string,
+  stripePaymentId: string
 ) {
   const token = localStorage.getItem('loops-token')
   const merchant_id = localStorage.getItem('loops-store-id')
@@ -70,9 +78,10 @@ export async function createLoopsSubscription(
   const body = {
     id: '2c6e239a-f02b-d158-2833-c7f883bb5530',
     merchant_id: merchant_id.toString(),
+    payment_id: stripePaymentId,
     products_variant: [
       {
-        product_type: 'plan',
+        product_type: 0,
         id: plan.key.toString(),
         num: 1,
         option: '商品ごとのメモを管理',
@@ -100,15 +109,15 @@ export async function createLoopsSubscription(
       tel: address.phone,
     },
     options: {
-      shipping: '0(通常配送) / 1(無料配送)',
+      shipping: 0,
       schedule_delivery_date: addDays(
         new Date(),
         plan.shipping_preparation_term
       ).toISOString(),
-      schedule_payment_date: calculateSchedulePaymentDate(plan),
+      schedule_payment_date: calculateSchedulePaymentDate(plan).toISOString(),
       complete_payment_date: new Date().toISOString(),
       coupon: '',
-      payment: 'stripe',
+      payment: 0,
       callback_url: 'https://localhost:4000',
     },
   }
@@ -132,6 +141,14 @@ export async function createLoopsSubscription(
 
 function calculateSchedulePaymentDate(plan: any) {
   const firstPurchaseDate = new Date()
+  if (plan.second_fixed_payment === 'today') {
+    setTimeout(function () {
+      fetch(`${apiUrl}/api/v1/schedule/runJobs`, {
+        method: 'POST',
+      })
+    }, 5 * 60 * 1000)
+    return firstPurchaseDate
+  }
   const secondPurchaseDate = addMonths(firstPurchaseDate, 1)
   if (plan.second_fixed_payment === 'last') {
     return endOfMonth(secondPurchaseDate)
@@ -146,5 +163,9 @@ function calculateSchedulePaymentDate(plan: any) {
   // } else {
   //   return addMonths(setDate(secondPurchaseDate, secondFixPayment), 1)
   // }
+  // console.log('secondFixPayment',secondFixPayment)
+  // console.log('firstPurchaseDate',firstPurchaseDate)
+  // console.log('secondPurchaseDate',secondPurchaseDate)
+  // console.log('setDate(secondPurchaseDate, secondFixPayment)',setDate(secondPurchaseDate, secondFixPayment))
   return setDate(secondPurchaseDate, secondFixPayment)
 }

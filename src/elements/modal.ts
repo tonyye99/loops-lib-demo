@@ -266,12 +266,12 @@ export function createModal() {
       }
 
 
-    `;
-  if (!document.querySelector("style[data-loops]")) {
-    const style = document.createElement("style");
-    style.setAttribute("data-loops", "");
-    style.innerHTML = css;
-    document.head.appendChild(style);
+    `
+  if (!document.querySelector('style[data-loops]')) {
+    const style = document.createElement('style')
+    style.setAttribute('data-loops', '')
+    style.innerHTML = css
+    document.head.appendChild(style)
   }
   // modal
   const modal = `
@@ -302,65 +302,65 @@ export function createModal() {
           </form>
         </div>
       </div>
-    `;
-  if (!document.querySelector(".loops-purchase-modal")) {
-    const div = document.createElement("div");
-    div.innerHTML = modal;
-    document.body.appendChild(div);
+    `
+  if (!document.querySelector('.loops-purchase-modal')) {
+    const div = document.createElement('div')
+    div.innerHTML = modal
+    document.body.appendChild(div)
   }
 }
 
 export function hideModal() {
   (
-    document.querySelector(".loops-purchase-modal") as HTMLElement
-  ).classList.add("hidden");
+    document.querySelector('.loops-purchase-modal') as HTMLElement
+  ).classList.add('hidden')
 }
 
 export function showModal() {
   (
-    document.querySelector(".loops-purchase-modal") as HTMLElement
-  ).classList.remove("hidden");
-  document.body.style.overflow = "hidden";
+    document.querySelector('.loops-purchase-modal') as HTMLElement
+  ).classList.remove('hidden')
+  document.body.style.overflow = 'hidden'
 }
 
 export function initStripe() {
   if (!document.querySelector('script[src="https://js.stripe.com/v3/"]')) {
-    const script = document.createElement("script");
-    script.setAttribute("src", "https://js.stripe.com/v3/");
-    document.head.appendChild(script);
+    const script = document.createElement('script')
+    script.setAttribute('src', 'https://js.stripe.com/v3/')
+    document.head.appendChild(script)
   }
 }
 
 export function showButtonLoader(isLoading: boolean) {
   if (isLoading === true) {
-    document.querySelector("button").disabled = true;
-    document.querySelector("#spinner").classList.remove("hidden");
-    document.querySelector("#button-text").classList.add("hidden");
+    document.querySelector('button').disabled = true
+    document.querySelector('#spinner').classList.remove('hidden')
+    document.querySelector('#button-text').classList.add('hidden')
   } else {
-    document.querySelector("button").disabled = false;
-    document.querySelector("#spinner").classList.add("hidden");
-    document.querySelector("#button-text").classList.remove("hidden");
+    document.querySelector('button').disabled = false
+    document.querySelector('#spinner').classList.add('hidden')
+    document.querySelector('#button-text').classList.remove('hidden')
   }
 }
 
 export function showLoader() {
-  document.querySelector(".lds-spinner").classList.remove("hidden");
-  document.querySelector("#payment-form").classList.add("hidden");
+  document.querySelector('.lds-spinner').classList.remove('hidden')
+  document.querySelector('#payment-form').classList.add('hidden')
 }
 
 export function hideLoader() {
-  document.querySelector(".lds-spinner").classList.add("hidden");
-  document.querySelector("#payment-form").classList.remove("hidden");
+  document.querySelector('.lds-spinner').classList.add('hidden')
+  document.querySelector('#payment-form').classList.remove('hidden')
 }
 
 export function showMessage(messageText) {
-  const messageContainer = document.querySelector("#payment-message");
+  const messageContainer = document.querySelector('#payment-message')
 
-  messageContainer.classList.remove("hidden");
-  messageContainer.textContent = messageText;
+  messageContainer.classList.remove('hidden')
+  messageContainer.textContent = messageText
 
   setTimeout(function () {
-    messageContainer.classList.add("hidden");
-    messageContainer.textContent = "";
-  }, 4000);
+    messageContainer.classList.add('hidden')
+    messageContainer.textContent = ''
+  }, 4000)
 }
