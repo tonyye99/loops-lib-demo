@@ -8,7 +8,14 @@ const apiUrl =
 // 2: group
 
 // const apiUrl = 'http://localhost:8080'
-import { addDays, addMonths, setDate, endOfMonth } from 'date-fns'
+import {
+  addDays,
+  addMonths,
+  setDate,
+  endOfMonth,
+  endOfDay,
+  setDay,
+} from 'date-fns'
 
 export async function getCredentials(clientId: string, clientSecret: string) {
   if (!clientId || !clientSecret) {
@@ -113,9 +120,14 @@ export async function createLoopsSubscription(
       schedule_delivery_date: addDays(
         new Date(),
         plan.shipping_preparation_term
-      ).toISOString(),
-      schedule_payment_date: calculateSchedulePaymentDate(plan).toISOString(),
-      complete_payment_date: new Date().toISOString(),
+      ).toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }),
+      schedule_payment_date: calculateSchedulePaymentDate(plan).toLocaleString(
+        'en-US',
+        { timeZone: 'Asia/Tokyo' }
+      ),
+      complete_payment_date: new Date().toLocaleString('en-US', {
+        timeZone: 'Asia/Tokyo',
+      }),
       coupon: '',
       payment: 0,
       callback_url: 'https://localhost:4000',
@@ -140,22 +152,31 @@ export async function createLoopsSubscription(
 }
 
 function calculateSchedulePaymentDate(plan: any) {
-  const firstPurchaseDate = new Date()
-  if (plan.second_fixed_payment === 'today') {
-    setTimeout(function () {
-      fetch(`${apiUrl}/api/v1/schedule/runJobs`, {
-        method: 'POST',
-      })
-    }, 5 * 60 * 1000)
-    return firstPurchaseDate
-  }
-  const secondPurchaseDate = addMonths(firstPurchaseDate, 1)
-  if (plan.second_fixed_payment === 'last') {
-    return endOfMonth(secondPurchaseDate)
-  }
-  const secondFixPayment = Number(plan.second_fixed_payment)
   /**
-   * Commented for phase one
+   ** Production usage
+   */
+  // const firstPurchaseDate = new Date()
+  // const secondPurchaseDate = addMonths(firstPurchaseDate, 1)
+  // if (plan.second_fixed_payment === 'none') {
+  //   return secondPurchaseDate
+  // }
+  // if (plan.second_fixed_payment === 'last') {
+  //   return endOfMonth(secondPurchaseDate)
+  // }
+  // return setDate(secondPurchaseDate, Number(plan.second_fixed_payment))
+  /**
+   ** Testing usage
+   */
+  const firstPurchaseDate = new Date()
+  if (
+    plan.second_fixed_payment === 'none' ||
+    plan.second_fixed_payment === 'last'
+  ) {
+    return addDays(firstPurchaseDate, 1)
+  }
+  return addDays(firstPurchaseDate, Number(plan.second_fixed_payment))
+  /**
+   ** Commented for phase one
    */
   // const interval = plan.interval
   // if (isAfter(setDate(secondPurchaseDate, secondFixPayment), addDays(firstPurchaseDate, interval))) {
@@ -163,9 +184,4 @@ function calculateSchedulePaymentDate(plan: any) {
   // } else {
   //   return addMonths(setDate(secondPurchaseDate, secondFixPayment), 1)
   // }
-  // console.log('secondFixPayment',secondFixPayment)
-  // console.log('firstPurchaseDate',firstPurchaseDate)
-  // console.log('secondPurchaseDate',secondPurchaseDate)
-  // console.log('setDate(secondPurchaseDate, secondFixPayment)',setDate(secondPurchaseDate, secondFixPayment))
-  return setDate(secondPurchaseDate, secondFixPayment)
 }
