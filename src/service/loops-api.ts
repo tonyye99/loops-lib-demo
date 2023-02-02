@@ -120,14 +120,9 @@ export async function createLoopsSubscription(
       schedule_delivery_date: addDays(
         new Date(),
         plan.shipping_preparation_term
-      ).toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }),
-      schedule_payment_date: calculateSchedulePaymentDate(plan).toLocaleString(
-        'en-US',
-        { timeZone: 'Asia/Tokyo' }
       ),
-      complete_payment_date: new Date().toLocaleString('en-US', {
-        timeZone: 'Asia/Tokyo',
-      }),
+      schedule_payment_date: calculateSchedulePaymentDate(plan),
+      complete_payment_date: new Date(),
       coupon: '',
       payment: 0,
       callback_url: 'https://localhost:4000',
@@ -172,7 +167,12 @@ function calculateSchedulePaymentDate(plan: any) {
     plan.second_fixed_payment === 'none' ||
     plan.second_fixed_payment === 'last'
   ) {
-    return addDays(firstPurchaseDate, 1)
+    setTimeout(() => {
+      fetch(`${apiUrl}/api/v1/schedule/runJobs`, {
+        method: 'POST',
+      })
+    }, 300000)
+    return firstPurchaseDate
   }
   return addDays(firstPurchaseDate, Number(plan.second_fixed_payment))
   /**
