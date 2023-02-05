@@ -15,6 +15,7 @@ import {
   endOfMonth,
   endOfDay,
   setDay,
+  addMinutes,
 } from 'date-fns'
 
 export async function getCredentials(clientId: string, clientSecret: string) {
@@ -162,19 +163,21 @@ function calculateSchedulePaymentDate(plan: any) {
   /**
    ** Testing usage
    */
-  const firstPurchaseDate = new Date()
-  if (
-    plan.second_fixed_payment === 'none' ||
-    plan.second_fixed_payment === 'last'
-  ) {
-    setTimeout(() => {
-      fetch(`${apiUrl}/api/v1/schedule/runJobs`, {
-        method: 'POST',
-      })
-    }, 300000)
-    return firstPurchaseDate
-  }
-  return addDays(firstPurchaseDate, Number(plan.second_fixed_payment))
+  // add 15 minutes to the first purchase date for testing
+  return addMinutes(new Date(), 15)
+  // const firstPurchaseDate = new Date()
+  // if (
+  //   plan.second_fixed_payment === 'none' ||
+  //   plan.second_fixed_payment === 'last'
+  // ) {
+  //   setTimeout(() => {
+  //     fetch(`${apiUrl}/api/v1/schedule/runJobs`, {
+  //       method: 'POST',
+  //     })
+  //   }, 300000)
+  //   return firstPurchaseDate
+  // }
+  // return addDays(firstPurchaseDate, Number(plan.second_fixed_payment))
   /**
    ** Commented for phase one
    */
