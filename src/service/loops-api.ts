@@ -164,7 +164,7 @@ function calculateSchedulePaymentDate(plan: any) {
    ** Testing usage
    */
   // add 15 minutes to the first purchase date for testing
-  return addMinutes(new Date(), 15)
+  return new Date()
   // const firstPurchaseDate = new Date()
   // if (
   //   plan.second_fixed_payment === 'none' ||
