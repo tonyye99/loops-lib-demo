@@ -42,10 +42,11 @@ export function createModal() {
       }
 
       #payment-message {
-        color: rgb(105, 115, 134);
+        color: red;
         font-size: 16px;
         line-height: 20px;
         padding-top: 12px;
+        padding-bottom: 12px;
         text-align: center;
       }
 
@@ -362,5 +363,5 @@ export function showMessage(messageText) {
   setTimeout(function () {
     messageContainer.classList.add('hidden')
     messageContainer.textContent = ''
-  }, 4000)
+  }, 6000)
 }

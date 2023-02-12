@@ -100,6 +100,9 @@ const singlePurchase = async (plan: any) => {
         emailAddress,
         stripePaymentId
       )
+
+      console.log('🚀 ~ file: single.ts:98 ~ form.addEventListener ~ status', status)
+
       if (status === 'success') {
         const { error } = await stripe.confirmPayment({
           elements,
@@ -119,14 +122,14 @@ const singlePurchase = async (plan: any) => {
             showMessage('An unexpected error occurred.')
           }
         }
+        hideModal()
         showMessage('Subscription created successfully')
       }
     } catch (error) {
-      showMessage('An unexpected error occurred.')
+      showMessage(error || 'An unexpected error occurred.')
     } finally {
       showButtonLoader(false)
       removeIframes()
-      hideModal()
     }
   })
 }
