@@ -5,4 +5,4 @@ export declare function initStripe(): void;
 export declare function showButtonLoader(isLoading: boolean): void;
 export declare function showLoader(): void;
 export declare function hideLoader(): void;
-export declare function showMessage(messageText: any): void;
+export declare function showMessage(messageText: any, isError: any): void;

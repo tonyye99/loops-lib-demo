@@ -31,13 +31,13 @@ const singlePurchase = async (plan: any) => {
   showLoader()
 
   let clientSecret = ''
-  let stripePaymentId = ''
+  let customerId = ''
   try {
-    const { clientSecret: secret, paymentId } = await createStripePaymentIntent(
+    const { clientSecret: secret, customer } = await createStripePaymentIntent(
       plan.price
     )
     clientSecret = secret
-    stripePaymentId = paymentId
+    customerId = customer
   } catch (error) {
     throw new Error(error)
   }
@@ -56,6 +56,9 @@ const singlePurchase = async (plan: any) => {
 
   let emailAddress = ''
   let address = {}
+  let isEmailValid = false
+  let paymentValid = false
+  let isAddressValid = false
   const elements = stripe.elements({
     appearance: {
       theme: 'stripe',
@@ -67,11 +70,21 @@ const singlePurchase = async (plan: any) => {
   linkAuthenticationEl.on('change', (event: any) => {
     if (event.error) {
       console.log(event.error)
-    } else {
+    }
+    if (event.complete) {
       emailAddress = event.value.email
+      isEmailValid = true
     }
   })
-  createPaymentElement(elements)
+  const paymentEl = createPaymentElement(elements)
+  paymentEl.on('change', (event: any) => {
+    if (event.error) {
+      console.log(event.error)
+    }
+    if (event.complete) {
+      paymentValid = true
+    }
+  })
   createAddressElement(elements)
 
   const cancelButtonEl = document.querySelector('#cancel')
@@ -88,48 +101,69 @@ const singlePurchase = async (plan: any) => {
     event.preventDefault()
     showButtonLoader(true)
 
+    if (!isEmailValid) {
+      showMessage('Please enter a valid email address', true)
+      showButtonLoader(false)
+      return
+    }
+
+    if (!paymentValid) {
+      showMessage('Please enter a valid payment method', true)
+      showButtonLoader(false)
+      return
+    }
+
     const addressElement = elements.getElement('address') as any
     const { complete, value } = await addressElement.getValue()
     if (complete) {
       address = value
+      isAddressValid = true
     }
+
+    if (!isAddressValid) {
+      showMessage('Please enter a valid address', true)
+      showButtonLoader(false)
+      return
+    }
+
     try {
-      const { status } = await createLoopsSubscription(
+      const loopsResponse = await createLoopsSubscription(
         address,
         plan,
         emailAddress,
-        stripePaymentId
+        customerId
       )
 
-      console.log('🚀 ~ file: single.ts:98 ~ form.addEventListener ~ status', status)
-
-      if (status === 'success') {
-        const { error } = await stripe.confirmPayment({
+      if (loopsResponse?.status === 'success') {
+        const response = await stripe.confirmPayment({
           elements,
           confirmParams: {
             return_url: '',
           },
           redirect: 'if_required',
         })
-
-        if (error) {
+        if (response.error) {
           if (
-            error?.type === 'card_error' ||
-            error?.type === 'validation_error'
+            response.error?.type === 'card_error' ||
+            response.error?.type === 'validation_error'
           ) {
-            showMessage(error.message)
+            showMessage(response.error.message, true)
           } else {
-            showMessage('An unexpected error occurred.')
+            showMessage('An unexpected error occurred.', true)
           }
         }
-        hideModal()
-        showMessage('Subscription created successfully')
+        if (response.paymentIntent.status === 'succeeded') {
+          showMessage('Payment successful!', false)
+          setTimeout(() => {
+            hideModal()
+            removeIframes()
+          }, 3000)
+        }
       }
     } catch (error) {
-      showMessage(error || 'An unexpected error occurred.')
+      showMessage(error || 'An unexpected error occurred.', true)
     } finally {
       showButtonLoader(false)
-      removeIframes()
     }
   })
 }

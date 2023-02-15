@@ -70,23 +70,22 @@ export async function createLoopsSubscription(
   address: any,
   plan: any,
   email: string,
-  stripePaymentId: string
+  customerId: string
 ) {
   const token = localStorage.getItem('loops-token')
   const merchant_id = localStorage.getItem('loops-store-id')
 
-  let firstName, lastName
-  if (address.name.indexOf(' ') !== -1) {
-    [firstName, lastName] = address.name.split(' ')
-  } else {
-    firstName = address.name
-    lastName = ''
-  }
+  // let firstName, lastName
+  // if (address && address.name.indexOf(' ') !== -1) {
+  //   [firstName, lastName] = address.name.split(' ')
+  // } else {
+  //   firstName = address.name
+  //   lastName = ''
+  // }
 
   const body = {
     id: '2c6e239a-f02b-d158-2833-c7f883bb5530',
     merchant_id: merchant_id.toString(),
-    payment_id: stripePaymentId,
     products_variant: [
       {
         product_type: 0,
@@ -96,13 +95,14 @@ export async function createLoopsSubscription(
       },
     ],
     customer_information: {
+      customer_id: customerId,
       address2: address.address.line2 || '',
       address1: address.address.line1 || '',
       city: address.address.city,
       pref: address.address.state,
       zipcode: address.address.postal_code,
-      first_name: firstName,
-      last_name: lastName,
+      first_name: address.firstName,
+      last_name: address.lastName,
       email: email,
       tel: address.phone,
     },
@@ -112,8 +112,8 @@ export async function createLoopsSubscription(
       city: address.address.city,
       pref: address.address.state,
       zipcode: address.address.postal_code,
-      first_name: firstName,
-      last_name: lastName,
+      first_name: address.firstName,
+      last_name: address.lastName,
       tel: address.phone,
     },
     options: {

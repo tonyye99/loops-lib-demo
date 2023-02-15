@@ -42,12 +42,19 @@ export function createModal() {
       }
 
       #payment-message {
-        color: red;
         font-size: 16px;
         line-height: 20px;
         padding-top: 12px;
         padding-bottom: 12px;
         text-align: center;
+      }
+
+      .payment-success {
+        color: green;
+      }
+
+      .payment-error {
+        color: red;
       }
 
       #link-authentication-element {
@@ -354,8 +361,16 @@ export function hideLoader() {
   document.querySelector('#payment-form').classList.remove('hidden')
 }
 
-export function showMessage(messageText) {
+export function showMessage(messageText, isError) {
   const messageContainer = document.querySelector('#payment-message')
+
+  if (isError) {
+    messageContainer.classList.remove('payment-success')
+    messageContainer.classList.add('payment-error')
+  } else {
+    messageContainer.classList.remove('payment-error')
+    messageContainer.classList.add('payment-success')
+  }
 
   messageContainer.classList.remove('hidden')
   messageContainer.textContent = messageText

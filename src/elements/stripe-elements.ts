@@ -19,6 +19,14 @@ export function createAddressElement(elements: any) {
     fields: {
       phone: 'always',
     },
+    validation: {
+      phone: {
+        required: 'always',
+      },
+    },
+    display: {
+      name: 'split'
+    }
   })
   addressElement.mount('#address-element')
   return addressElement
